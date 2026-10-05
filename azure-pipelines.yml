@@ -1,0 +1,20 @@
+trigger:
+- main
+pool:
+  vmImage: 'windows-latest'
+steps:
+- task: UseDotNet@2
+  inputs:
+    packageType: 'sdk'
+    version: '8.0.x'
+
+- script: |
+    dotnet restore
+    dotnet build --configuration Release
+    dotnet publish -c Release -o $(Build.ArtifactStagingDirectory)
+  displayName: 'Build & Publish'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
